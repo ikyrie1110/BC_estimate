@@ -139,24 +139,41 @@ def predict_batch(input_file_path, output_file_path, model, feature_names):
             print(f"Full feature list required by model: {feature_names}")
         
         # Batch prediction
-        # print("\nEstimating BC concentration (batch mode)...")
         predictions = predict_batch_vectorized(df_mapped, model, feature_names)
         
-        # Build output DataFrame
-        df_output = df_original.copy()
-        df_output['BC_Predicted'] = predictions
+        # ========== 修改开始：只输出 Lon, Lat, BC_Predicted ==========
+        # 定义可能的经度列名（按优先级排序）
+        lon_candidates = ['Lon', 'lon', 'Longitude', 'longitude', 'LONGITUDE', 'LON']
+        lat_candidates = ['Lat', 'lat', 'Latitude', 'latitude', 'LATITUDE', 'LAT']
+        
+        lon_col = None
+        lat_col = None
+        for col in lon_candidates:
+            if col in df_original.columns:
+                lon_col = col
+                break
+        for col in lat_candidates:
+            if col in df_original.columns:
+                lat_col = col
+                break
+        
+        if lon_col is not None and lat_col is not None:
+            # 找到经纬度列，输出三列
+            df_output = pd.DataFrame({
+                'Lon': df_original[lon_col],
+                'Lat': df_original[lat_col],
+                'BC_Estimated': predictions
+            })
+            # print(f"Output columns: Lon, Lat, BC_Predicted")
+        else:
+            # 未找到经纬度列，回退到输出所有列并附加预测列
+            print(f"Warning: Could not find longitude/latitude columns. Saving all columns.")
+            df_output = df_original.copy()
+            df_output['BC_Predicted'] = predictions
+        # ========== 修改结束 ==========
         
         # Save result
         df_output.to_csv(output_file_path, index=False, encoding='utf-8-sig')
-        
-        # Print statistics
-        # print("\n" + "=" * 50)
-        # print("Estimation Statistics:")
-        # print(f"  Total samples: {len(df_output)}")
-        # print(f"  BC concentration range: [{predictions.min():.4f}, {predictions.max():.4f}] μg/m³")
-        # print(f"  Mean BC concentration: {predictions.mean():.4f} μg/m³")
-        # print(f"  Standard deviation: {predictions.std():.4f} μg/m³")
-        # print("=" * 50)
         
         return True
         
