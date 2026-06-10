@@ -205,7 +205,7 @@ def main():
     success = predict_batch(input_file, output_file, model, feature_names)
     
     if success:
-        print(f"\n✅ Estimation completed! Results saved to: {output_file}")
+        print(f"\n Estimation completed! Results saved to: {output_file}")
         open_folder = input("\nOpen output folder? (y/n): ").strip().lower()
         if open_folder == 'y':
             folder = os.path.dirname(output_file)
