@@ -1,21 +1,23 @@
 # -*- mode: python ; coding: utf-8 -*-
 
+from PyInstaller.utils.hooks import collect_all
+
+# 收集 xgboost 的所有依赖（包括 DLL）
+xgboost_datas, xgboost_binaries, xgboost_hiddenimports = collect_all('xgboost')
+
 a = Analysis(
-    ['bc_predict.py'],          # 你的主脚本文件名
+    ['bc_predict.py'],                     # 你的主脚本
     pathex=[],
-    binaries=[],
-    datas=[
-        ('xgb_best_model.pkl', '.'),
-        ('feature_names.pkl', '.'),
-    ],
+    binaries=xgboost_binaries,             # 关键：添加 xgboost 的二进制文件（.dll）
+    datas=xgboost_datas,                   # 关键：添加 xgboost 的数据文件
     hiddenimports=[
+        'sklearn',
         'numpy',
         'pandas',
-        'xgboost',
-        'sklearn',
         'joblib',
         'tkinter',
-    ],
+        'xgboost'
+    ] + xgboost_hiddenimports,             # 添加 xgboost 的隐藏导入
     hookspath=[],
     hooksconfig={},
     runtime_hooks=[],
@@ -31,14 +33,14 @@ exe = EXE(
     a.binaries,
     a.datas,
     [],
-    name='BC_Estimate',           # 生成的 exe 名称
+    name='BC_Predictor',                   # 生成的 exe 名称
     debug=False,
     bootloader_ignore_signals=False,
     strip=False,
     upx=True,
     upx_exclude=[],
     runtime_tmpdir=None,
-    console=True,                  # 显示控制台窗口
+    console=True,                          # 显示控制台窗口
     disable_windowed_traceback=False,
     argv_emulation=False,
     target_arch=None,
