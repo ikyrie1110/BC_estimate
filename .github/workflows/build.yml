@@ -29,7 +29,7 @@ jobs:
         pip install pyinstaller==6.5.0
 
     - name: Verify imports
-      run: python -c "import pandas, xgboost, sklearn, joblib; print(f'pandas {pd.__version__}, xgboost {xgboost.__version__}')"
+      run: python -c "import pandas as pd, xgboost, sklearn, joblib; print(f'pandas {pd.__version__}, xgboost {xgboost.__version__}')"
 
     - name: Build EXE
       run: |
