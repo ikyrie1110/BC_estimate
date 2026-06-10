@@ -31,18 +31,8 @@ jobs:
     - name: Verify imports
       run: python -c "import pandas as pd, xgboost, sklearn, joblib; print(f'pandas {pd.__version__}, xgboost {xgboost.__version__}')"
 
-    - name: Build EXE
-      run: |
-        pyinstaller --onefile --console --name BC_Predictor `
-          --hidden-import=sklearn `
-          --hidden-import=xgboost `
-          --hidden-import=joblib `
-          --hidden-import=numpy `
-          --hidden-import=pandas `
-          --hidden-import=tkinter `
-          --add-data "xgb_best_model.pkl;." `
-          --add-data "feature_names.pkl;." `
-          bc_predict.py
+    - name: Build EXE with spec
+      run: pyinstaller bc_predict.spec     # 使用 .spec 文件
 
     - name: Upload EXE
       uses: actions/upload-artifact@v4
