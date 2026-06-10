@@ -36,7 +36,7 @@ COLUMN_MAPPING = {
     'T': 'T',       # wind direction
     'SP': 'SP',       # pressure (or SP)
     'TP': 'TP',     # precipitation (or TP)
-    'BCTAP': 'BCTAP',
+    'TAP': 'BCTAP',
 }
 # ========================================================
 
